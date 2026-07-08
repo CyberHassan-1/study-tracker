@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>أبو الحسن | متتبع دور ثاني</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root{
+  --bg: #090d13;
+  --panel: rgba(26, 33, 44, 0.6);
+  --panel2: rgba(34, 43, 56, 0.55);
+  --border: rgba(255,255,255,0.09);
+  --text: #eef2f7;
+  --muted: #8996a6;
+  --accent: #f2a65a;
+  --accent-dim: #b57a45;
+  --success: #59e6a8;
+  --danger: #ef5b52;
+  --gold: #e8c468;
+  --blur: 16px;
+}
+
+body{
+  background:
+    radial-gradient(circle at 15% -10%, rgba(90,130,255,0.10), transparent 55%),
+    radial-gradient(circle at 90% 5%, rgba(242,166,90,0.08), transparent 50%),
+    var(--bg);
+  color: var(--text);
+  font-family: 'Tajawal', sans-serif;
+  min-height: 100vh;
+  padding: 32px 16px 80px;
+}
+
+.wrap{ max-width: 760px; margin: 0 auto; }
+
+@keyframes fadeInUp{
+  from{ opacity:0; transform: translateY(8px); }
+  to{ opacity:1; transform: translateY(0); }
+}
+@keyframes pulseGlow{
+  0%,100%{ box-shadow: 0 0 0 0 rgba(89,230,168,0.35); }
+  50%{ box-shadow: 0 0 0 6px rgba(89,230,168,0); }
+}
+@keyframes checkPop{
+  0%{ transform: scale(0.7); }
+  50%{ transform: scale(1.15); }
+  100%{ transform: scale(1); }
+}
+@keyframes fall{
+  to{ transform: translateY(110vh) rotate(360deg); opacity: .3; }
+}
+
+.top-brand{
+  display:flex; justify-content: space-between; align-items:center; margin-bottom: 22px;
+}
+.brand-name{
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); letter-spacing: .5px;
+}
+.clock{ font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--muted); }
+
+.header{ margin-bottom: 20px; }
+h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
+.sub{ color: var(--muted); font-size: 14px; }
+
+.vision{
+  background: var(--panel);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin: 20px 0;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+}
+.vision::before{
+  content: ""; position: absolute; inset: 0 auto 0 0; width: 3px; background: var(--accent);
+}
+.vision-label{
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 1px; margin-bottom: 10px;
+}
+.vision-path{ display:flex; align-items:center; flex-wrap: wrap; gap: 6px; font-size: 14px; }
+.vision-step{
+  background: var(--panel2); border: 1px solid var(--border); border-radius: 20px; padding: 6px 14px; white-space: nowrap;
+}
+.vision-step.final{ background: rgba(242,166,90,0.15); border-color: var(--accent); color: var(--accent); font-weight: 700; }
+.vision-arrow{ color: var(--muted); font-size: 13px; }
+
+.stats-grid{ display:grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0; }
+.stat-card{
+  background: var(--panel);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--border); border-radius: 10px; padding: 14px 10px; text-align:center;
+}
+.stat-num{ font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: var(--accent); }
+.stat-label{ font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+.overall{
+  background: var(--panel);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 6px 0 24px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+}
+.overall-top{ display:flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+.overall-label{ font-size: 14px; color: var(--muted); }
+.overall-pct{ font-family: 'JetBrains Mono', monospace; font-size: 30px; font-weight: 700; color: var(--accent); }
+.bar-track{ height: 12px; background: var(--panel2); border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
+.bar-fill{ height: 100%; background: linear-gradient(90deg, var(--accent-dim), var(--accent)); border-radius: 6px; transition: width .4s ease; }
+.overall-meta{ display:flex; justify-content: space-between; margin-top: 10px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); }
+
+.exam-row{ display:flex; align-items:center; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--border); flex-wrap: wrap; }
+.exam-row label{ font-size: 13px; color: var(--muted); white-space: nowrap; }
+.exam-row input[type="date"]{
+  background: var(--panel2); border: 1px solid var(--border); color: var(--text); font-family:'JetBrains Mono', monospace;
+  padding: 6px 10px; border-radius: 6px; font-size: 13px;
+}
+.days-left{ font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--gold); margin-right: auto; }
+
+.subject{
+  background: var(--panel);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 18px 14px;
+  margin-bottom: 14px;
+  transition: border-color .2s ease, transform .2s ease;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  animation: fadeInUp .35s ease;
+}
+.subject:hover{ transform: translateY(-2px); }
+.subject.complete{ border-color: var(--success); animation: pulseGlow 2s ease-in-out 1, fadeInUp .35s ease; }
+.subject.bottleneck{ border-color: var(--danger); }
+
+.subject-head{ display:flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 12px; }
+.subject-name-row{ display:flex; align-items:center; gap: 10px; flex: 1; min-width: 0; }
+.subject-icon{
+  width: 34px; height: 34px; border-radius: 9px; background: var(--panel2); border: 1px solid var(--border);
+  display:flex; align-items:center; justify-content:center; flex-shrink: 0; color: var(--accent);
+}
+.subject-icon svg{ width: 18px; height: 18px; }
+.subject-name{ font-size: 17px; font-weight: 700; }
+.subject-name input{
+  background: transparent; border: none; color: var(--text); font-family:'Tajawal',sans-serif;
+  font-size: 17px; font-weight: 700; width: 100%; max-width: 200px; padding: 2px 4px; border-radius: 4px;
+}
+.subject-name input:focus{ outline: 1px solid var(--accent); background: var(--panel2); }
+.badge{ font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 10px; white-space: nowrap; }
+.badge.done{ background: rgba(89,230,168,0.15); color: var(--success); }
+.badge.weak{ background: rgba(239,91,82,0.15); color: var(--danger); }
+
+.subject-pct{ font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--muted); white-space: nowrap; }
+.subject-pct b{ color: var(--accent); font-size: 16px; }
+
+.mini-bar-track{ height: 7px; background: var(--panel2); border-radius: 4px; overflow: hidden; margin-bottom: 14px; border: 1px solid var(--border); }
+.mini-bar-fill{ height: 100%; background: var(--success); transition: width .3s ease; }
+
+.chapter{ display:flex; align-items:center; gap: 10px; padding: 8px 4px; border-bottom: 1px solid var(--border); }
+.chapter:last-of-type{ border-bottom: none; }
+.chk{
+  width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid var(--muted);
+  background: transparent; cursor: pointer; flex-shrink: 0; position: relative; appearance: none;
+}
+.chk:checked{ background: var(--success); border-color: var(--success); animation: checkPop .25s ease; }
+.chk:checked::after{
+  content: "✓"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  color: var(--bg); font-size: 13px; font-weight: 700;
+}
+.chapter-name{ flex: 1; font-size: 15px; min-width: 0; }
+.chapter-name.done{ color: var(--muted); text-decoration: line-through; }
+.chapter-name input{
+  width: 100%; background: transparent; border: none; color: inherit; font-family:'Tajawal',sans-serif; font-size: 15px; padding: 2px 4px; border-radius: 4px;
+}
+.chapter-name input:focus{ outline: 1px solid var(--accent); background: var(--panel2); color: var(--text); }
+.del-btn{
+  background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 16px; padding: 2px 6px; border-radius: 4px; flex-shrink:0;
+}
+.del-btn:hover{ color: var(--danger); background: var(--panel2); }
+
+.add-row{ display:flex; gap: 8px; margin-top: 10px; }
+.add-row input{
+  flex:1; background: var(--panel2); border: 1px solid var(--border); color: var(--text);
+  font-family:'Tajawal',sans-serif; font-size: 14px; padding: 8px 10px; border-radius: 6px;
+}
+.add-row input:focus{ outline: none; border-color: var(--accent); }
+.add-row button{
+  background: transparent; border: 1px solid var(--accent-dim); color: var(--accent); font-family:'Tajawal',sans-serif;
+  font-size: 14px; padding: 8px 16px; border-radius: 6px; cursor: pointer; white-space: nowrap;
+}
+.add-row button:hover{ background: var(--accent); color: var(--bg); }
+
+.del-subject{ background: transparent; border: none; color: var(--muted); font-size: 13px; cursor: pointer; padding: 4px 8px; flex-shrink:0; }
+.del-subject:hover{ color: var(--danger); }
+
+.add-subject-row{ display:flex; gap: 8px; margin-top: 20px; }
+.add-subject-row input{
+  flex:1; background: var(--panel); border: 1px solid var(--border); color: var(--text);
+  font-family:'Tajawal',sans-serif; font-size: 15px; padding: 12px 14px; border-radius: 8px;
+}
+.add-subject-row input:focus{ outline: none; border-color: var(--accent); }
+.add-subject-row button{
+  background: var(--accent); border: none; color: var(--bg); font-family:'Tajawal',sans-serif; font-weight: 700;
+  font-size: 15px; padding: 12px 22px; border-radius: 8px; cursor: pointer; white-space: nowrap;
+}
+
+.footer-note{ text-align:center; margin-top: 26px; font-size: 13px; color: var(--muted); line-height: 1.9; }
+.footer-note b{ color: var(--accent); }
+
+.status-line{ font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); text-align:center; margin-top: 10px; min-height: 16px; }
+.empty-hint{ color: var(--muted); font-size: 13px; padding: 6px 4px; }
+
+@media (max-width: 480px){ .stats-grid{ grid-template-columns: repeat(2, 1fr); } }
+
+/* ===== celebration ===== */
+.celebration-overlay{
+  position: fixed; inset: 0; background: rgba(9,13,19,0.94);
+  display: none; align-items: center; justify-content: center;
+  z-index: 999; backdrop-filter: blur(8px); padding: 20px;
+}
+.celebration-overlay.show{ display: flex; }
+.celebration-content{
+  position: relative; text-align: center; max-width: 640px; width: 100%;
+  animation: fadeInUp .5s ease;
+}
+.celebration-title{ font-size: 24px; font-weight: 900; color: var(--gold); margin-bottom: 8px; }
+.celebration-sub{ color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+.celebration-video-box{
+  position: relative; width: 100%; padding-top: 56.25%; border-radius: 12px; overflow: hidden;
+  border: 1px solid var(--border); box-shadow: 0 12px 30px rgba(0,0,0,0.45); margin-bottom: 20px;
+  background: var(--panel2); display: none;
+}
+.celebration-video-box.active{ display: block; }
+.celebration-video-box iframe{
+  position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
+}
+.celebration-close{
+  background: var(--accent); border: none; color: var(--bg); font-family:'Tajawal',sans-serif;
+  font-weight: 700; font-size: 15px; padding: 10px 26px; border-radius: 8px; cursor: pointer;
+}
+.celebration-flowers{
+  position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 998;
+}
+.flower{
+  position: absolute; top: -40px; font-size: 22px;
+  animation: fall linear forwards;
+}
+</style>
+</head>
+<body>
+
+<div id="celebrationOverlay" class="celebration-overlay">
+  <div class="celebration-content">
+    <div class="celebration-title">الحمدلله تم إنجاز المنهج كامل 🌸</div>
+    <div class="celebration-sub">توفيقك بإذن الله بالامتحان يا أبو الحسن</div>
+    <div class="celebration-video-box" id="celebrationVideoBox"></div>
+    <button class="celebration-close" onclick="closeCelebration()">إغلاق</button>
+  </div>
+</div>
+<div class="celebration-flowers" id="flowerField"></div>
+
+<div class="wrap">
+
+  <div class="top-brand">
+    <span class="brand-name">// CyberHassan.exe</span>
+    <span class="clock" id="clock"></span>
+  </div>
+
+  <div class="header">
+    <h1>يلا يا أبو الحسن</h1>
+    <div class="sub">دور ثاني - سادس علمي. علّم كل فصل خلصته، والتطبيق يحسبلك الباقي.</div>
+  </div>
+
+  <div class="vision">
+    <div class="vision-label">// الهدف النهائي</div>
+    <div class="vision-path">
+      <span class="vision-step">تجاوز الدور الثاني</span>
+      <span class="vision-arrow">←</span>
+      <span class="vision-step">قبول تخصص الأمن السيبراني</span>
+      <span class="vision-arrow">←</span>
+      <span class="vision-step">الاستقلال المالي</span>
+      <span class="vision-arrow">←</span>
+      <span class="vision-step final">زينب ♥</span>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-num" id="statDone">0</div><div class="stat-label">فصل خلصته</div></div>
+    <div class="stat-card"><div class="stat-num" id="statLeft">0</div><div class="stat-label">فصل باقي</div></div>
+    <div class="stat-card"><div class="stat-num" id="statSubjects">0/0</div><div class="stat-label">مواد مكتملة</div></div>
+    <div class="stat-card"><div class="stat-num" id="statDays">-</div><div class="stat-label">يوم للامتحان</div></div>
+  </div>
+
+  <div class="overall">
+    <div class="overall-top">
+      <span class="overall-label">التقدم الكلي</span>
+      <span class="overall-pct" id="overallPct">0%</span>
+    </div>
+    <div class="bar-track"><div class="bar-fill" id="overallBar" style="width:0%"></div></div>
+    <div class="overall-meta">
+      <span id="overallCount">0 / 0 فصل</span>
+      <span id="lastSaved"></span>
+    </div>
+    <div class="exam-row">
+      <label>تاريخ الامتحان الأول:</label>
+      <input type="date" id="examDate" onchange="setExamDate(this.value)">
+      <span class="days-left" id="daysLeftInline"></span>
+    </div>
+  </div>
+
+  <div id="subjects"></div>
+
+  <div class="add-subject-row">
+    <input type="text" id="newSubjectInput" placeholder="اسم مادة جديدة...">
+    <button onclick="addSubject()">+ إضافة مادة</button>
+  </div>
+
+  <div class="footer-note">كل فصل تخلصه هو خطوة أقرب لـ <b>75%</b> (أو أكثر). استمر.</div>
+  <div class="status-line" id="statusLine"></div>
+</div>
+
+<script>
+const STORAGE_KEY = 'abu-alhassan-study-tracker-v4';
+
+/* ضع بين القوسين معرّف فيديو اليوتيوب (الجزء بعد v= بالرابط) */
+const CELEBRATION_YOUTUBE_ID = 'https://youtu.be/ynCyYXRVlCM?si=wDXu4KCI7cnWkslI';
+
+let state = null;
+
+const defaultState = {
+  examDate: '2026-08-01',
+  celebrated: false,
+  subjects: [
+    { id: 's1', name: 'الفيزياء', chapters: [
+      { id: 'c1', name: 'المتسعة', done: false },
+      { id: 'c2', name: 'الحث الكهرومغناطيسي', done: false },
+      { id: 'c3', name: 'التيار المتناوب', done: false },
+      { id: 'c4', name: 'الموجات الكهرومغناطيسية', done: false },
+      { id: 'c5', name: 'البصريات الفيزيائية', done: false },
+      { id: 'c6', name: 'الفيزياء الحديثة', done: false },
+      { id: 'c7', name: 'الكترونيات الحالة الصلبة', done: false },
+      { id: 'c8', name: 'الأطياف والليزر', done: false }
+    ]},
+    { id: 's2', name: 'الرياضيات', chapters: [
+      { id: 'c9', name: 'الأعداد المركبة', done: false },
+      { id: 'c10', name: 'القطوع المخروطية', done: false },
+      { id: 'c11', name: 'التكامل', done: false },
+      { id: 'c12', name: 'التفاضل', done: false }
+    ]},
+    { id: 's3', name: 'الأحياء', chapters: [
+      { id: 'c39', name: 'الخلية', done: false },
+      { id: 'c40', name: 'الأنسجة', done: false },
+      { id: 'c41', name: 'التكاثر', done: false },
+      { id: 'c42', name: 'الوراثة', done: false }
+    ]},
+    { id: 's4', name: 'أدب عربي', chapters: [
+      { id: 'c17', name: 'الأدب الحديث', done: false },
+      { id: 'c18', name: 'حافظ إبراهيم', done: false },
+      { id: 'c19', name: 'الجواهري', done: false },
+      { id: 'c20', name: 'النقد الأدبي الحديث: الكلاسيكية', done: false },
+      { id: 'c21', name: 'مدرسة المهجر', done: false },
+      { id: 'c22', name: 'مدرسة الشعر الحر', done: false },
+      { id: 'c23', name: 'النقد الأدبي الحديث: الرومانسية', done: false },
+      { id: 'c24', name: 'شعر القضية الفلسطينية', done: false },
+      { id: 'c25', name: 'المسرحية: ثانية يجيء الحسين', done: false },
+      { id: 'c26', name: 'القصة القصيرة: النشأة والتطور', done: false },
+      { id: 'c27', name: 'الرواية', done: false },
+      { id: 'c28', name: 'النقد الأدبي الحديث: الواقعية', done: false },
+      { id: 'c29', name: 'المقالة', done: false }
+    ]},
+    { id: 's5', name: 'قواعد عربي', chapters: [
+      { id: 'c30', name: 'أسلوب الاستفهام', done: false },
+      { id: 'c31', name: 'النفي', done: false },
+      { id: 'c32', name: 'أسلوب التقديم والتأخير', done: false },
+      { id: 'c33', name: 'أسلوب التوكيد', done: false },
+      { id: 'c34', name: 'أسلوب النداء', done: false },
+      { id: 'c35', name: 'أسلوب التعجب', done: false },
+      { id: 'c36', name: 'أسلوبا المدح والذم', done: false },
+      { id: 'c37', name: 'أسلوبا التمني والترجي', done: false },
+      { id: 'c38', name: 'أسلوبا العرض والتحضيض', done: false }
+    ]},
+    { id: 's6', name: 'إسلامية', chapters: [
+      { id: 'c13', name: 'الوحدة الاولى', done: false },
+      { id: 'c14', name: 'الوحدة الثانية', done: false },
+      { id: 'c15', name: 'الوحدة الثالثة', done: false },
+      { id: 'c16', name: 'الوحدة الرابعة', done: false }
+    ]}
+  ]
+};
+
+const BOTTLENECK_SUBJECT_NAME = 'الرياضيات';
+
+const ICONS = {
+  'فيزياء': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="10" ry="4.2"/><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(120 12 12)"/></svg>',
+  'رياضيات': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h14M5 20h14M6 4l12 16M18 4L6 20"/></svg>',
+  'احياء': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21c-4-2-7-6-7-10a7 7 0 0 1 14 0c0 4-3 8-7 10Z"/><path d="M12 21V9"/></svg>',
+  'ادب': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h9a3 3 0 0 1 3 3v11H7a3 3 0 0 1-3-3V5Z"/><path d="M20 5v13"/></svg>',
+  'قواعد': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h10M4 18h13"/></svg>',
+  'اسلامية': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v3M12 18v3M4.2 12H2M22 12h-2.2M6 6l1.6 1.6M16.4 16.4 18 18M6 18l1.6-1.6M16.4 7.6 18 6"/><circle cx="12" cy="12" r="5"/></svg>',
+  'default': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h5"/></svg>'
+};
+
+function getIcon(name){
+  const n = name.replace(/[إأآا]/g, 'ا').replace(/ة/g,'ه');
+  for(const key in ICONS){
+    if(key === 'default') continue;
+    const k = key.replace(/[إأآا]/g, 'ا').replace(/ة/g,'ه');
+    if(n.includes(k)) return ICONS[key];
+  }
+  return ICONS.default;
+}
+
+function uid(){ return 'x' + Math.random().toString(36).slice(2, 9); }
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      state = JSON.parse(raw);
+      if(!state.examDate) state.examDate = defaultState.examDate;
+      if(typeof state.celebrated === 'undefined') state.celebrated = false;
+    } else {
+      state = JSON.parse(JSON.stringify(defaultState));
+      saveState();
+    }
+  } catch(e){
+    state = JSON.parse(JSON.stringify(defaultState));
+    saveState();
+  }
+  render();
+}
+
+function saveState(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    const s = document.getElementById('lastSaved');
+    if(s){
+      const now = new Date();
+      s.textContent = 'محفوظ ' + now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+    }
+  } catch(e){
+    const st = document.getElementById('statusLine');
+    if(st) st.textContent = 'تعذر الحفظ محلياً بهذا المتصفح';
+  }
+}
+
+function subjectPct(subject){
+  if(!subject.chapters.length) return 0;
+  const done = subject.chapters.filter(c => c.done).length;
+  return Math.round((done / subject.chapters.length) * 100);
+}
+
+function updateClock(){
+  const el = document.getElementById('clock');
+  if(!el) return;
+  const now = new Date();
+  el.textContent = now.toLocaleDateString('ar-IQ', { weekday: 'long', day: 'numeric', month: 'long' });
+}
+
+function updateDaysLeft(){
+  const examInput = document.getElementById('examDate');
+  examInput.value = state.examDate;
+  const target = new Date(state.examDate + 'T00:00:00');
+  const now = new Date();
+  const diffMs = target - now;
+  const days = Math.ceil(diffMs / (1000*60*60*24));
+  const text = days > 0 ? (days + ' يوم') : (days === 0 ? 'اليوم!' : 'انتهى الموعد');
+  document.getElementById('statDays').textContent = days > 0 ? days : (days === 0 ? '0' : '-');
+  document.getElementById('daysLeftInline').textContent = text;
+}
+
+function setExamDate(value){
+  if(!value) return;
+  state.examDate = value;
+  saveState();
+  updateDaysLeft();
+}
+
+/* ===== celebration logic ===== */
+function spawnFlowers(){
+  const field = document.getElementById('flowerField');
+  const emojiSet = ['🌸','🌺','🌷'];
+  for(let i = 0; i < 40; i++){
+    const f = document.createElement('div');
+    f.className = 'flower';
+    f.textContent = emojiSet[Math.floor(Math.random()*emojiSet.length)];
+    f.style.left = Math.random()*100 + 'vw';
+    f.style.animationDuration = (4 + Math.random()*3) + 's';
+    f.style.animationDelay = (Math.random()*2) + 's';
+    f.style.fontSize = (16 + Math.random()*14) + 'px';
+    field.appendChild(f);
+  }
+  setTimeout(() => { field.innerHTML = ''; }, 8000);
+}
+
+function triggerCelebration(){
+  const overlay = document.getElementById('celebrationOverlay');
+  overlay.classList.add('show');
+  spawnFlowers();
+
+ const videoBox = document.getElementById('celebrationVideoBox');
+  if(CELEBRATION_YOUTUBE_ID){
+    videoBox.innerHTML = `
+      <iframe src="https://www.youtube.com/embed/${CELEBRATION_YOUTUBE_ID}?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <a href="https://www.youtube.com/watch?v=${CELEBRATION_YOUTUBE_ID}" target="_blank" style="position:absolute; bottom:-38px; right:0; font-size:12px; color:var(--muted); font-family:'Tajawal',sans-serif;">إذا الفيديو ما يشتغل هنا، اضغط لمشاهدته على يوتيوب مباشرة</a>
+    `;
+    videoBox.classList.add('active');
+  }
+}
+
+function closeCelebration(){
+  document.getElementById('celebrationOverlay').classList.remove('show');
+  const videoBox = document.getElementById('celebrationVideoBox');
+  videoBox.classList.remove('active');
+  videoBox.innerHTML = '';
+}
+
+function render(){
+  const container = document.getElementById('subjects');
+  container.innerHTML = '';
+
+  let totalChapters = 0, totalDone = 0, subjectsComplete = 0;
+
+  state.subjects.forEach(subject => {
+    totalChapters += subject.chapters.length;
+    totalDone += subject.chapters.filter(c => c.done).length;
+
+    const pct = subjectPct(subject);
+    const hasChapters = subject.chapters.length > 0;
+    const isComplete = hasChapters && pct === 100;
+    const isBottleneck = subject.name.trim() === BOTTLENECK_SUBJECT_NAME && !isComplete;
+    if(isComplete) subjectsComplete++;
+
+    const card = document.createElement('div');
+    card.className = 'subject' + (isComplete ? ' complete' : '') + (isBottleneck ? ' bottleneck' : '');
+
+    const head = document.createElement('div');
+    head.className = 'subject-head';
+    head.innerHTML = `
+      <div class="subject-name-row">
+        <div class="subject-icon">${getIcon(subject.name)}</div>
+        <div class="subject-name">
+          <input type="text" value="${escapeAttr(subject.name)}" onchange="renameSubject('${subject.id}', this.value)">
+        </div>
+        ${isComplete ? '<span class="badge done">مكتمل</span>' : ''}
+        ${isBottleneck ? '<span class="badge weak">نقطة ضعف</span>' : ''}
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span class="subject-pct"><b>${pct}%</b></span>
+        <button class="del-subject" onclick="deleteSubject('${subject.id}')">حذف</button>
+      </div>
+    `;
+    card.appendChild(head);
+
+    const miniTrack = document.createElement('div');
+    miniTrack.className = 'mini-bar-track';
+    miniTrack.innerHTML = `<div class="mini-bar-fill" style="width:${pct}%"></div>`;
+    card.appendChild(miniTrack);
+
+    if(subject.chapters.length === 0){
+      const hint = document.createElement('div');
+      hint.className = 'empty-hint';
+      hint.textContent = 'ما فيه فصول بعد، ضيف فصول المادة بالأسفل.';
+      card.appendChild(hint);
+    }
+
+    subject.chapters.forEach(ch => {
+      const row = document.createElement('div');
+      row.className = 'chapter';
+      row.innerHTML = `
+        <input type="checkbox" class="chk" ${ch.done ? 'checked' : ''} onchange="toggleChapter('${subject.id}','${ch.id}')">
+        <span class="chapter-name ${ch.done ? 'done' : ''}">
+          <input type="text" value="${escapeAttr(ch.name)}" onchange="renameChapter('${subject.id}','${ch.id}', this.value)">
+        </span>
+        <button class="del-btn" onclick="deleteChapter('${subject.id}','${ch.id}')">×</button>
+      `;
+      card.appendChild(row);
+    });
+
+    const addRow = document.createElement('div');
+    addRow.className = 'add-row';
+    addRow.innerHTML = `
+      <input type="text" placeholder="اسم فصل جديد..." id="new-${subject.id}" onkeydown="if(event.key==='Enter') addChapter('${subject.id}')">
+      <button onclick="addChapter('${subject.id}')">+ إضافة فصل</button>
+    `;
+    card.appendChild(addRow);
+
+    container.appendChild(card);
+  });
+
+  const overallPct = totalChapters ? Math.round((totalDone / totalChapters) * 100) : 0;
+  document.getElementById('overallPct').textContent = overallPct + '%';
+  document.getElementById('overallBar').style.width = overallPct + '%';
+  document.getElementById('overallCount').textContent = totalDone + ' / ' + totalChapters + ' فصل';
+
+  document.getElementById('statDone').textContent = totalDone;
+  document.getElementById('statLeft').textContent = totalChapters - totalDone;
+  document.getElementById('statSubjects').textContent = subjectsComplete + '/' + state.subjects.length;
+
+  if(totalChapters > 0 && totalDone === totalChapters){
+    if(!state.celebrated){
+      state.celebrated = true;
+      saveState();
+      triggerCelebration();
+    }
+  } else if(state.celebrated){
+    state.celebrated = false;
+  }
+
+  updateDaysLeft();
+}
+
+function escapeAttr(str){
+  return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function toggleChapter(subjectId, chapterId){
+  const subject = state.subjects.find(s => s.id === subjectId);
+  const chapter = subject.chapters.find(c => c.id === chapterId);
+  chapter.done = !chapter.done;
+  render();
+  saveState();
+}
+
+function renameSubject(subjectId, value){
+  const subject = state.subjects.find(s => s.id === subjectId);
+  subject.name = value.trim() || subject.name;
+  render();
+  saveState();
+}
+
+function renameChapter(subjectId, chapterId, value){
+  const subject = state.subjects.find(s => s.id === subjectId);
+  const chapter = subject.chapters.find(c => c.id === chapterId);
+  chapter.name = value.trim() || chapter.name;
+  saveState();
+}
+
+function addChapter(subjectId){
+  const input = document.getElementById('new-' + subjectId);
+  const val = input.value.trim();
+  if(!val) return;
+  const subject = state.subjects.find(s => s.id === subjectId);
+  subject.chapters.push({ id: uid(), name: val, done: false });
+  input.value = '';
+  render();
+  saveState();
+}
+
+function deleteChapter(subjectId, chapterId){
+  const subject = state.subjects.find(s => s.id === subjectId);
+  subject.chapters = subject.chapters.filter(c => c.id !== chapterId);
+  render();
+  saveState();
+}
+
+function addSubject(){
+  const input = document.getElementById('newSubjectInput');
+  const val = input.value.trim();
+  if(!val) return;
+  state.subjects.push({ id: uid(), name: val, chapters: [] });
+  input.value = '';
+  render();
+  saveState();
+}
+
+function deleteSubject(subjectId){
+  state.subjects = state.subjects.filter(s => s.id !== subjectId);
+  render();
+  saveState();
+}
+
+updateClock();
+setInterval(updateClock, 60000);
+setInterval(updateDaysLeft, 60000);
+loadState();
+</script>
+</body>
+</html>
