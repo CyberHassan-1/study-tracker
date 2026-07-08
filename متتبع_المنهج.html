@@ -331,8 +331,8 @@ h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
 <script>
 const STORAGE_KEY = 'abu-alhassan-study-tracker-v4';
 
-/* ضع بين القوسين معرّف فيديو اليوتيوب (الجزء بعد v= بالرابط) */
-const CELEBRATION_YOUTUBE_ID = 'https://youtu.be/ynCyYXRVlCM?si=wDXu4KCI7cnWkslI';
+/* معرّف فيديو اليوتيوب */
+const CELEBRATION_YOUTUBE_ID = 'BiwlJl-aqX4';
 
 let state = null;
 
@@ -400,12 +400,12 @@ const defaultState = {
 const BOTTLENECK_SUBJECT_NAME = 'الرياضيات';
 
 const ICONS = {
-  'فيزياء': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="10" ry="4.2"/><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(120 12 12)"/></svg>',
+  'فيزياء': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="10" ry="4.2"/><ellipse cx="12" cy="12" rx="4.2" ry="10" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="4.2" ry="10" transform="rotate(120 12 12)"/></svg>',
   'رياضيات': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h14M5 20h14M6 4l12 16M18 4L6 20"/></svg>',
   'احياء': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21c-4-2-7-6-7-10a7 7 0 0 1 14 0c0 4-3 8-7 10Z"/><path d="M12 21V9"/></svg>',
   'ادب': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h9a3 3 0 0 1 3 3v11H7a3 3 0 0 1-3-3V5Z"/><path d="M20 5v13"/></svg>',
   'قواعد': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h10M4 18h13"/></svg>',
-  'اسلامية': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v3M12 18v3M4.2 12H2M22 12h-2.2M6 6l1.6 1.6M16.4 16.4 18 18M6 18l1.6-1.6M16.4 7.6 18 6"/><circle cx="12" cy="12" r="5"/></svg>',
+  'اسلامية': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v3M12 18v3M4.2 12H2M22 12h-2.2M6 6l1.6 1.6M16.4 16.4 18 18M6 18l1.6-1.6M16.4 7.6 18 6"/></svg>',
   'default': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h5"/></svg>'
 };
 
@@ -507,11 +507,10 @@ function triggerCelebration(){
   overlay.classList.add('show');
   spawnFlowers();
 
- const videoBox = document.getElementById('celebrationVideoBox');
+  const videoBox = document.getElementById('celebrationVideoBox');
   if(CELEBRATION_YOUTUBE_ID){
     videoBox.innerHTML = `
       <iframe src="https://www.youtube.com/embed/${CELEBRATION_YOUTUBE_ID}?autoplay=1&rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-      <a href="https://www.youtube.com/watch?v=${CELEBRATION_YOUTUBE_ID}" target="_blank" style="position:absolute; bottom:-38px; right:0; font-size:12px; color:var(--muted); font-family:'Tajawal',sans-serif;">إذا الفيديو ما يشتغل هنا، اضغط لمشاهدته على يوتيوب مباشرة</a>
     `;
     videoBox.classList.add('active');
   }
