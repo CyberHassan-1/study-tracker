@@ -254,6 +254,22 @@ h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
   position: absolute; top: -40px; font-size: 22px;
   animation: fall linear forwards;
 }
+
+/* ===== phase schedule ===== */
+.phase-card{
+  background: var(--panel);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin: -8px 0 24px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+}
+.phase-top{ display:flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.phase-label{ font-size: 14px; color: var(--muted); }
+.phase-count{ font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: var(--accent); }
+.phase-meta{ display:flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); margin-top: 4px; }
 </style>
 </head>
 <body>
@@ -316,6 +332,28 @@ h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
       <span class="days-left" id="daysLeftInline"></span>
     </div>
   </div>
+  <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr);">
+    <div class="stat-card">
+      <div class="stat-num" id="statMinisterial">-</div>
+      <div class="stat-label">يوم للأسئلة الوزارية</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statModels">-</div>
+      <div class="stat-label">يوم للنماذج الامتحانية</div>
+    </div>
+  </div>
+
+
+  <div class="phase-card">
+    <div class="phase-top">
+      <span class="phase-label">المرحلة الحالية بالجدول (29 يوم)</span>
+      <span class="phase-count" id="phaseCountdown">-</span>
+    </div>
+    <div class="phase-meta">
+      <span id="phaseCurrentName">-</span>
+      <span id="phaseNextInfo"></span>
+    </div>
+  </div>
 
   <div id="subjects"></div>
 
@@ -333,6 +371,9 @@ const STORAGE_KEY = 'abu-alhassan-study-tracker-v4';
 
 /* معرّف فيديو اليوتيوب */
 const CELEBRATION_YOUTUBE_ID = 'BiwlJl-aqX4';
+
+/* يوم 1 بجدولك (29 يوم) */
+const SCHEDULE_START = '2026-07-04';
 
 let state = null;
 
@@ -483,6 +524,48 @@ function setExamDate(value){
   state.examDate = value;
   saveState();
   updateDaysLeft();
+}
+
+/* ===== 29-day schedule phase ===== */
+function updatePhase(){
+  const start = new Date(SCHEDULE_START + 'T00:00:00');
+  const now = new Date();
+  const dayNumber = Math.floor((now - start) / (1000*60*60*24)) + 1;
+
+  let phaseName, nextPhaseDay, nextPhaseName;
+  if(dayNumber <= 20){
+    phaseName = 'مراجعة بسيطة';
+    nextPhaseDay = 21;
+    nextPhaseName = 'حل الأسئلة الوزارية';
+  } else if(dayNumber <= 25){
+    phaseName = 'حل الأسئلة الوزارية';
+    nextPhaseDay = 26;
+    nextPhaseName = 'حل النماذج الامتحانية';
+  } else if(dayNumber <= 29){
+    phaseName = 'حل النماذج الامتحانية';
+    nextPhaseDay = null;
+    nextPhaseName = null;
+  } else {
+    phaseName = 'انتهى الجدول - بالتوفيق بالامتحان';
+    nextPhaseDay = null;
+    nextPhaseName = null;
+  }
+
+  document.getElementById('phaseCurrentName').textContent = 'اليوم ' + Math.max(dayNumber,1) + ' من 29 — ' + phaseName;
+
+  if(nextPhaseDay){
+    const daysLeft = nextPhaseDay - dayNumber;
+    document.getElementById('phaseCountdown').textContent = daysLeft + ' يوم';
+    document.getElementById('phaseNextInfo').textContent = 'للبدء بـ ' + nextPhaseName;
+  } else {
+    document.getElementById('phaseCountdown').textContent = '✓';
+    document.getElementById('phaseNextInfo').textContent = '';
+  }
+
+  const daysToMinisterial = 21 - dayNumber;
+  const daysToModels = 26 - dayNumber;
+  document.getElementById('statMinisterial').textContent = daysToMinisterial > 0 ? daysToMinisterial : '✓';
+  document.getElementById('statModels').textContent = daysToModels > 0 ? daysToModels : '✓';
 }
 
 /* ===== celebration logic ===== */
@@ -681,6 +764,8 @@ function deleteSubject(subjectId){
 updateClock();
 setInterval(updateClock, 60000);
 setInterval(updateDaysLeft, 60000);
+updatePhase();
+setInterval(updatePhase, 60000);
 loadState();
 </script>
 </body>
