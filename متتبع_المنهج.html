@@ -346,11 +346,17 @@ h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
 
   <div class="phase-card">
     <div class="phase-top">
-      <span class="phase-label">المرحلة الحالية بالجدول (29 يوم)</span>
-      <span class="phase-count" id="phaseCountdown">-</span>
+      <span class="phase-label">باقي على انتهاء جدول الـ29 يوم كامل</span>
+      <span class="phase-count" id="scheduleRemaining">-</span>
     </div>
     <div class="phase-meta">
       <span id="phaseCurrentName">-</span>
+    </div>
+    <div class="phase-meta" style="margin-top:10px; padding-top:10px; border-top:1px dashed var(--border);">
+      <span class="phase-label" style="font-size:12px;">المرحلة القادمة</span>
+      <span class="phase-count" id="phaseCountdown" style="font-size:16px;">-</span>
+    </div>
+    <div class="phase-meta">
       <span id="phaseNextInfo"></span>
     </div>
   </div>
@@ -372,13 +378,13 @@ const STORAGE_KEY = 'abu-alhassan-study-tracker-v4';
 /* معرّف فيديو اليوتيوب */
 const CELEBRATION_YOUTUBE_ID = 'BiwlJl-aqX4';
 
-/* يوم 1 بجدولك (29 يوم) */
-const SCHEDULE_START = '2026-07-04';
+/* يوم 1 بجدولك (29 يوم) — بدأ 2 يوليو 2026 */
+const SCHEDULE_START = '2026-07-02';
 
 let state = null;
 
 const defaultState = {
-  examDate: '2026-08-01',
+ examDate: '2026-08-01',
   celebrated: false,
   subjects: [
     { id: 's1', name: 'الفيزياء', chapters: [
@@ -477,6 +483,11 @@ function loadState(){
     state = JSON.parse(JSON.stringify(defaultState));
     saveState();
   }
+  // تحديث صريح لتاريخ الامتحان إلى 1 أيلول/سبتمبر 2026 (طلب أبو الحسن) حتى لو كان محفوظ سابقاً بتاريخ مختلف
+  if(state.examDate !== '2026-08-01'){
+    state.examDate = '2026-08-01';
+    saveState();
+  }
   render();
 }
 
@@ -552,6 +563,9 @@ function updatePhase(){
   }
 
   document.getElementById('phaseCurrentName').textContent = 'اليوم ' + Math.max(dayNumber,1) + ' من 29 — ' + phaseName;
+
+  const remaining = 29 - dayNumber;
+  document.getElementById('scheduleRemaining').textContent = remaining > 0 ? (remaining + ' يوم') : (remaining === 0 ? 'اليوم الأخير' : 'انتهى ✓');
 
   if(nextPhaseDay){
     const daysLeft = nextPhaseDay - dayNumber;
@@ -766,6 +780,16 @@ setInterval(updateClock, 60000);
 setInterval(updateDaysLeft, 60000);
 updatePhase();
 setInterval(updatePhase, 60000);
+
+/* إعادة الحساب فوراً عند العودة لتبويب الصفحة (مثلاً بعد ما المتصفح يجمّد التبويب بالخلفية) */
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'visible'){
+    updateClock();
+    updateDaysLeft();
+    updatePhase();
+  }
+});
+
 loadState();
 </script>
 </body>
