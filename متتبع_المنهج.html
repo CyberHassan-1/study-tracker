@@ -545,13 +545,13 @@ function updatePhase(){
   const dayNumber = Math.floor((now - start) / (1000*60*60*24)) + 1;
 
   let phaseName, nextPhaseDay, nextPhaseName;
-  if(dayNumber <= 21){
+  if(dayNumber <= 23){
     phaseName = 'مراجعة بسيطة';
-    nextPhaseDay = 22;
+    nextPhaseDay = 24;
     nextPhaseName = 'حل الأسئلة الوزارية';
-  } else if(dayNumber <= 26){
+  } else if(dayNumber <= 28){
     phaseName = 'حل الأسئلة الوزارية';
-    nextPhaseDay = 27;
+    nextPhaseDay = 29;
     nextPhaseName = 'حل النماذج الامتحانية';
   } else if(dayNumber <= 30){
     phaseName = 'حل النماذج الامتحانية';
@@ -577,8 +577,8 @@ function updatePhase(){
     document.getElementById('phaseNextInfo').textContent = '';
   }
 
-  const daysToMinisterial = 22 - dayNumber;
-  const daysToModels = 27 - dayNumber;
+  const daysToMinisterial = 24 - dayNumber;
+  const daysToModels = 29 - dayNumber;
   document.getElementById('statMinisterial').textContent = daysToMinisterial > 0 ? daysToMinisterial : '✓';
   document.getElementById('statModels').textContent = daysToModels > 0 ? daysToModels : '✓';
   renderPhaseDatesTable(start);
@@ -596,9 +596,9 @@ function dayOffsetDate(startDate, dayNum){
 
 function renderPhaseDatesTable(start){
   const phases = [
-    { name: 'تغطية المنهج (مراجعة بسيطة)', from: 1, to: 21 },
-    { name: 'حل الأسئلة الوزارية', from: 22, to: 26 },
-    { name: 'حل النماذج الامتحانية', from: 27, to: 30 }
+    { name: 'تغطية المنهج (مراجعة بسيطة)', from: 1, to: 23 },
+    { name: 'حل الأسئلة الوزارية', from: 24, to: 28 },
+    { name: 'حل النماذج الامتحانية', from: 29, to: 30 }
   ];
   const box = document.getElementById('phaseDatesTable');
   if(!box) return;
@@ -814,7 +814,6 @@ setInterval(updateDaysLeft, 60000);
 updatePhase();
 setInterval(updatePhase, 60000);
 
-/* إعادة الحساب فوراً عند العودة لتبويب الصفحة (مثلاً بعد ما المتصفح يجمّد التبويب بالخلفية) */
 document.addEventListener('visibilitychange', () => {
   if(document.visibilityState === 'visible'){
     updateClock();
