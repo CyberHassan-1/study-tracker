@@ -342,7 +342,7 @@ h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
 
   <div class="phase-card">
     <div class="phase-top">
-      <span class="phase-label">باقي على انتهاء جدول الـ30 يوم كامل</span>
+      <span class="phase-label" id="scheduleTotalLabel">باقي على انتهاء جدول الـ34 يوم كامل</span>
       <span class="phase-count" id="scheduleRemaining">-</span>
     </div>
     <div class="phase-meta">
@@ -375,13 +375,13 @@ const STORAGE_KEY = 'abu-alhassan-study-tracker-v4';
 /* معرّف فيديو اليوتيوب */
 const CELEBRATION_YOUTUBE_ID = 'BiwlJl-aqX4';
 
-/* يوم 1 بجدولك (30 يوم) — بدأ 2 يوليو 2026، ينتهي 31 يوليو */
+/* يوم 1 بجدولك — بدأ 2 يوليو 2026 */
 const SCHEDULE_START = '2026-07-02';
 
 let state = null;
 
 const defaultState = {
-  examDate: '2026-08-01',
+  examDate: '2026-08-04',
   celebrated: false,
   subjects: [
     { id: 's1', name: 'الفيزياء', chapters: [
@@ -480,9 +480,9 @@ function loadState(){
     state = JSON.parse(JSON.stringify(defaultState));
     saveState();
   }
-  // تحديث صريح لتاريخ الامتحان إلى 1 أيلول/سبتمبر 2026 (طلب أبو الحسن) حتى لو كان محفوظ سابقاً بتاريخ مختلف
-  if(state.examDate !== '2026-08-01'){
-    state.examDate = '2026-08-01';
+  // تحديث صريح لتاريخ الامتحان إلى 4 آب/أغسطس 2026 (طلب أبو الحسن) حتى لو كان محفوظ سابقاً بتاريخ مختلف
+  if(state.examDate !== '2026-08-04'){
+    state.examDate = '2026-08-04';
     saveState();
   }
   render();
@@ -535,13 +535,13 @@ function setExamDate(value){
 }
 
 /* ===== 30-day schedule phase ===== */
-/* آخر يوم بكل مرحلة (شامل ذلك اليوم نفسه) — تغطية المنهج 25 يوم، الأسئلة الوزارية 5 أيام */
-const PHASE1_END = 25; // آخر يوم تغطية المنهج
-const PHASE2_END = 30; // آخر يوم الأسئلة الوزارية (نهاية الجدول)
+/* آخر يوم بكل مرحلة (شامل ذلك اليوم نفسه) — تغطية المنهج 29 يوم (25+4 بعد تعديل تاريخ الامتحان)، الأسئلة الوزارية 5 أيام */
+const PHASE1_END = 29; // آخر يوم تغطية المنهج
+const PHASE2_END = 34; // آخر يوم الأسئلة الوزارية (نهاية الجدول)
 
-/* عدد الأيام الباقية لحد نهاية اليوم المحدد (يوصل صفر وهو بنفس آخر يوم، ويتغير بعد منتصف ليلته) */
+/* عدد الأيام الباقية شاملة اليوم الحالي نفسه، لحد نهاية اليوم المحدد */
 function daysUntilEnd(endDay, dayNumber){
-  return Math.max(endDay - dayNumber, 0);
+  return Math.max(endDay - dayNumber + 1, 0);
 }
 
 function updatePhase(){
@@ -564,10 +564,11 @@ function updatePhase(){
     nextPhaseName = null;
   }
 
-  document.getElementById('phaseCurrentName').textContent = 'اليوم ' + Math.max(dayNumber,1) + ' من 30 — ' + phaseName;
+  document.getElementById('phaseCurrentName').textContent = 'اليوم ' + Math.max(dayNumber,1) + ' من ' + PHASE2_END + ' — ' + phaseName;
 
-  const remaining = PHASE2_END - dayNumber;
-  document.getElementById('scheduleRemaining').textContent = remaining > 0 ? (remaining + ' يوم') : (remaining === 0 ? 'اليوم الأخير' : 'انتهى ✓');
+  const remaining = daysUntilEnd(PHASE2_END, dayNumber);
+  document.getElementById('scheduleRemaining').textContent = remaining > 1 ? (remaining + ' يوم') : (remaining === 1 ? 'اليوم الأخير' : 'انتهى ✓');
+  document.getElementById('scheduleTotalLabel').textContent = 'باقي على انتهاء جدول الـ' + PHASE2_END + ' يوم كامل';
 
   if(phaseEndDay){
     const daysLeft = daysUntilEnd(phaseEndDay, dayNumber);
