@@ -19,6 +19,7 @@
   --muted: #8996a6;
   --accent: #f2a65a;
   --accent-dim: #b57a45;
+  --accent-rgb: 242,166,90;
   --success: #59e6a8;
   --danger: #ef5b52;
   --gold: #e8c468;
@@ -28,12 +29,13 @@
 body{
   background:
     radial-gradient(circle at 15% -10%, rgba(90,130,255,0.10), transparent 55%),
-    radial-gradient(circle at 90% 5%, rgba(242,166,90,0.08), transparent 50%),
+    radial-gradient(circle at 90% 5%, rgba(var(--accent-rgb), 0.08), transparent 50%),
     var(--bg);
   color: var(--text);
   font-family: 'Tajawal', sans-serif;
   min-height: 100vh;
   padding: 32px 16px 80px;
+  transition: background .4s ease;
 }
 
 .wrap{ max-width: 760px; margin: 0 auto; }
@@ -58,14 +60,37 @@ body{
   0%{ background-position: 0% 0%; }
   100%{ background-position: 200% 0%; }
 }
+@keyframes miniPop{
+  0%{ opacity:0; transform: translate(0,0) scale(.5); }
+  15%{ opacity:1; }
+  100%{ opacity:0; transform: translate(var(--dx), var(--dy)) scale(1.1); }
+}
+@keyframes spinIn{
+  from{ opacity:0; transform: rotate(-8deg) scale(.85); }
+  to{ opacity:1; transform: rotate(0) scale(1); }
+}
 
 .top-brand{
-  display:flex; justify-content: space-between; align-items:center; margin-bottom: 22px;
+  display:flex; justify-content: space-between; align-items:center; margin-bottom: 14px;
 }
 .brand-name{
   font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); letter-spacing: .5px;
+  transition: color .3s ease;
 }
 .clock{ font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--muted); }
+
+.theme-row{
+  display:flex; align-items:center; gap: 10px; margin-bottom: 22px;
+}
+.theme-row-label{ font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: .5px; }
+.theme-swatches{ display:flex; gap: 8px; }
+.theme-swatch{
+  width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border);
+  background: var(--swatch-color); cursor: pointer; padding: 0; flex-shrink: 0;
+  transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.theme-swatch:hover{ transform: scale(1.18); }
+.theme-swatch.active{ border-color: var(--text); box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--swatch-color); }
 
 .header{ margin-bottom: 20px; }
 h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
@@ -85,6 +110,7 @@ h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
 }
 .vision::before{
   content: ""; position: absolute; inset: 0 auto 0 0; width: 3px; background: var(--accent);
+  transition: background .3s ease;
 }
 .vision-label{
   font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 1px; margin-bottom: 10px;
@@ -93,7 +119,7 @@ h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
 .vision-step{
   background: var(--panel2); border: 1px solid var(--border); border-radius: 20px; padding: 6px 14px; white-space: nowrap;
 }
-.vision-step.final{ background: rgba(242,166,90,0.15); border-color: var(--accent); color: var(--accent); font-weight: 700; }
+.vision-step.final{ background: rgba(var(--accent-rgb),0.15); border-color: var(--accent); color: var(--accent); font-weight: 700; transition: color .3s ease, border-color .3s ease, background .3s ease; }
 .vision-arrow{ color: var(--muted); font-size: 13px; }
 
 .stats-grid{ display:grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0; }
@@ -105,7 +131,7 @@ h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
   transition: transform .2s ease, border-color .2s ease;
 }
 .stat-card:hover{ transform: translateY(-3px); border-color: var(--accent-dim); }
-.stat-num{ font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: var(--accent); }
+.stat-num{ font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: var(--accent); transition: color .3s ease; }
 .stat-label{ font-size: 11px; color: var(--muted); margin-top: 4px; }
 
 .overall{
@@ -120,14 +146,14 @@ h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
 }
 .overall-top{ display:flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
 .overall-label{ font-size: 14px; color: var(--muted); }
-.overall-pct{ font-family: 'JetBrains Mono', monospace; font-size: 30px; font-weight: 700; color: var(--accent); }
+.overall-pct{ font-family: 'JetBrains Mono', monospace; font-size: 30px; font-weight: 700; color: var(--accent); transition: color .3s ease; }
 .bar-track{ height: 12px; background: var(--panel2); border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
 .bar-fill{
   height: 100%;
   background: linear-gradient(90deg, var(--accent-dim), var(--accent), var(--accent-dim));
   background-size: 200% 100%;
   animation: shimmer 3.5s linear infinite;
-  border-radius: 6px; transition: width .4s ease;
+  border-radius: 6px; transition: width .4s ease, background .3s ease;
 }
 .overall-meta{ display:flex; justify-content: space-between; margin-top: 10px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); }
 
@@ -137,9 +163,18 @@ h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
   background: var(--panel2); border: 1px solid var(--border); color: var(--text); font-family:'JetBrains Mono', monospace;
   padding: 6px 10px; border-radius: 6px; font-size: 13px;
 }
+.exam-row input[type="date"]:focus, .exam-row input[type="number"]:focus{ outline: 1px solid var(--accent); }
 .exam-row input[type="number"]{ width: 70px; }
 .exam-row .hint{ color: var(--muted); font-size: 11px; }
 .days-left{ font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--gold); margin-right: auto; }
+
+.buffer-line{
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; text-align: center;
+  margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--border);
+  transition: color .25s ease;
+}
+.buffer-line.buffer-ok{ color: var(--success); }
+.buffer-line.buffer-warn{ color: var(--danger); }
 
 .subject{
   background: var(--panel);
@@ -151,17 +186,18 @@ h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
   margin-bottom: 14px;
   transition: border-color .2s ease, transform .2s ease;
   box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-  animation: fadeInUp .35s ease;
+  animation: fadeInUp .4s ease both;
 }
 .subject:hover{ transform: translateY(-2px); }
-.subject.complete{ border-color: var(--success); animation: pulseGlow 2s ease-in-out 1, fadeInUp .35s ease; }
+.subject.complete{ border-color: var(--success); animation: pulseGlow 2s ease-in-out 1, fadeInUp .4s ease both; }
 .subject.bottleneck{ border-color: var(--danger); }
 
 .subject-head{ display:flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 12px; }
-.subject-name-row{ display:flex; align-items:center; gap: 10px; flex: 1; min-width: 0; }
+.subject-name-row{ display:flex; align-items:center; gap: 10px; flex: 1; min-width: 0; flex-wrap: wrap; }
 .subject-icon{
   width: 34px; height: 34px; border-radius: 9px; background: var(--panel2); border: 1px solid var(--border);
   display:flex; align-items:center; justify-content:center; flex-shrink: 0; color: var(--accent);
+  transition: color .3s ease;
 }
 .subject-icon svg{ width: 18px; height: 18px; }
 .subject-name{ font-size: 17px; font-weight: 700; }
@@ -173,9 +209,14 @@ h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
 .badge{ font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 10px; white-space: nowrap; }
 .badge.done{ background: rgba(89,230,168,0.15); color: var(--success); }
 .badge.weak{ background: rgba(239,91,82,0.15); color: var(--danger); }
+.chapter-count-badge{
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted);
+  background: var(--panel2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 3px 9px; white-space: nowrap; flex-shrink: 0;
+}
 
 .subject-pct{ font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--muted); white-space: nowrap; }
-.subject-pct b{ color: var(--accent); font-size: 16px; }
+.subject-pct b{ color: var(--accent); font-size: 16px; transition: color .3s ease; }
 
 .mini-bar-track{ height: 7px; background: var(--panel2); border-radius: 4px; overflow: hidden; margin-bottom: 14px; border: 1px solid var(--border); }
 .mini-bar-fill{
@@ -217,6 +258,7 @@ h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
 .add-row button{
   background: transparent; border: 1px solid var(--accent-dim); color: var(--accent); font-family:'Tajawal',sans-serif;
   font-size: 14px; padding: 8px 16px; border-radius: 6px; cursor: pointer; white-space: nowrap;
+  transition: background .2s ease, color .2s ease, border-color .3s ease;
 }
 .add-row button:hover{ background: var(--accent); color: var(--bg); }
 
@@ -232,10 +274,11 @@ h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
 .add-subject-row button{
   background: var(--accent); border: none; color: var(--bg); font-family:'Tajawal',sans-serif; font-weight: 700;
   font-size: 15px; padding: 12px 22px; border-radius: 8px; cursor: pointer; white-space: nowrap;
+  transition: background .3s ease;
 }
 
 .footer-note{ text-align:center; margin-top: 26px; font-size: 13px; color: var(--muted); line-height: 1.9; }
-.footer-note b{ color: var(--accent); }
+.footer-note b{ color: var(--accent); transition: color .3s ease; }
 
 .status-line{ font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); text-align:center; margin-top: 10px; min-height: 16px; }
 .empty-hint{ color: var(--muted); font-size: 13px; padding: 6px 4px; }
@@ -267,6 +310,7 @@ h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
 .celebration-close{
   background: var(--accent); border: none; color: var(--bg); font-family:'Tajawal',sans-serif;
   font-weight: 700; font-size: 15px; padding: 10px 26px; border-radius: 8px; cursor: pointer;
+  transition: background .3s ease;
 }
 .celebration-flowers{
   position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 998;
@@ -274,6 +318,13 @@ h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
 .flower{
   position: absolute; top: -40px; font-size: 22px;
   animation: fall linear forwards;
+}
+
+/* ===== micro-celebration (per-subject burst) ===== */
+.mini-burst{ width: 0; height: 0; }
+.mini-particle{
+  position:absolute; font-size:16px; opacity:0; will-change: transform, opacity;
+  animation: miniPop .9s ease forwards;
 }
 
 /* ===== phase schedule ===== */
@@ -289,10 +340,19 @@ h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
 }
 .phase-top{ display:flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
 .phase-label{ font-size: 14px; color: var(--muted); }
-.phase-count{ font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: var(--accent); }
+.phase-count{ font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: var(--accent); transition: color .3s ease; }
 .phase-meta{ display:flex; justify-content: space-between; align-items:center; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); margin-top: 4px; }
-.phase-icon{ color: var(--accent); flex-shrink: 0; }
+.phase-icon{ color: var(--accent); flex-shrink: 0; transition: color .3s ease; }
 .phase-icon-label{ display:flex; align-items:center; gap: 6px; font-family:'Tajawal',sans-serif; font-size: 13px; color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -312,6 +372,11 @@ h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
   <div class="top-brand">
     <span class="brand-name">// CyberHassan.exe</span>
     <span class="clock" id="clock"></span>
+  </div>
+
+  <div class="theme-row">
+    <span class="theme-row-label">// الألوان</span>
+    <div class="theme-swatches" id="themeSwatches"></div>
   </div>
 
   <div class="header">
@@ -355,10 +420,16 @@ h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
       <span class="days-left" id="daysLeftInline"></span>
     </div>
     <div class="exam-row">
-      <label>أيام الأسئلة الوزارية:</label>
-      <input type="number" id="ministerialDaysInput" min="0" value="0" onchange="setMinisterialDays(this.value)">
-      <span class="hint">خليه صفر لين تنحدد المواعيد — كل الأيام تروح لتغطية المنهج تلقائياً</span>
+      <label>أيام تغطية المنهج:</label>
+      <input type="number" id="coverageDaysInput" min="1" onchange="setCoverageDays(this.value)">
+      <span class="hint">عدد الأيام المخصصة لمراجعة كل فصول المنهج</span>
     </div>
+    <div class="exam-row">
+      <label>أيام الأسئلة الوزارية:</label>
+      <input type="number" id="ministerialDaysInput" min="0" onchange="setMinisterialDays(this.value)">
+      <span class="hint">خليه صفر لين تحدد جدول حل الأسئلة الوزارية</span>
+    </div>
+    <div class="buffer-line" id="bufferLine"></div>
   </div>
   <div class="stats-grid" style="grid-template-columns: 1fr;">
     <div class="stat-card">
@@ -415,11 +486,24 @@ const CELEBRATION_YOUTUBE_ID = 'BiwlJl-aqX4';
 /* يوم 1 بجدولك — بدأ 2 يوليو 2026 */
 const SCHEDULE_START = '2026-07-02';
 
+/* ألوان الثيمات المتاحة — تتحكم بـ accent / accent-dim بس، الألوان الدلالية (نجاح/خطر) ثابتة دائماً */
+const THEMES = [
+  { key: 'amber',  label: 'كهرماني', accent: '#f2a65a', dim: '#b57a45', rgb: '242,166,90' },
+  { key: 'cyan',   label: 'سماوي',   accent: '#4fc9f0', dim: '#3a8fa8', rgb: '79,201,240' },
+  { key: 'violet', label: 'بنفسجي',  accent: '#a78bfa', dim: '#6f58b0', rgb: '167,139,250' },
+  { key: 'rose',   label: 'وردي',    accent: '#f26a94', dim: '#b34d70', rgb: '242,106,148' },
+  { key: 'indigo', label: 'نيلي',    accent: '#6c8ef2', dim: '#4a5fb0', rgb: '108,142,242' }
+];
+
 let state = null;
+let knownCompleteIds = new Set();
+let firstRenderDone = false;
 
 const defaultState = {
   examDate: '2026-08-04',
-  ministerialDays: 0,   // أيام الأسئلة الوزارية — صفر لين تنحدد، وقابلة للتعديل من الواجهة
+  coverageDays: 34,     // أيام تغطية المنهج — مباشرة وقابلة للتعديل (34 = نفس سلوك النسخة القديمة لما الوزاري كان صفر)
+  ministerialDays: 0,   // أيام حل الأسئلة الوزارية — مباشرة وقابلة للتعديل
+  theme: 'amber',
   celebrated: false,
   subjects: [
     { id: 's1', name: 'الفيزياء', chapters: [
@@ -514,6 +598,18 @@ function loadState(){
       if(typeof state.ministerialDays === 'undefined' || state.ministerialDays === null){
         state.ministerialDays = 0;
       }
+      if(typeof state.coverageDays === 'undefined' || state.coverageDays === null){
+        /* ترقية من النسخة القديمة: نحسبها بنفس المعادلة القديمة (اجمالي الأيام - الوزارية)
+           عشان تقدمك المحفوظ وموقعك بالجدول ما ينكسر بعد التحديث */
+        const start = new Date(SCHEDULE_START + 'T00:00:00');
+        const examD = new Date(state.examDate + 'T00:00:00');
+        let totalDays = Math.round((examD - start) / (1000*60*60*24)) + 1;
+        if(totalDays < 1) totalDays = 1;
+        state.coverageDays = Math.max(totalDays - state.ministerialDays, 1);
+      }
+      if(!state.theme || !THEMES.some(t => t.key === state.theme)){
+        state.theme = 'amber';
+      }
     } else {
       state = JSON.parse(JSON.stringify(defaultState));
       saveState();
@@ -522,6 +618,7 @@ function loadState(){
     state = JSON.parse(JSON.stringify(defaultState));
     saveState();
   }
+  applyTheme(state.theme, false);
   render();
 }
 
@@ -539,6 +636,28 @@ function saveState(){
   }
 }
 
+/* ===== الثيمات (تغيير الألوان) ===== */
+function applyTheme(themeKey, doSave){
+  const theme = THEMES.find(t => t.key === themeKey) || THEMES[0];
+  const root = document.documentElement.style;
+  root.setProperty('--accent', theme.accent);
+  root.setProperty('--accent-dim', theme.dim);
+  root.setProperty('--accent-rgb', theme.rgb);
+  state.theme = theme.key;
+  if(doSave !== false) saveState();
+  renderThemeSwatches();
+}
+
+function renderThemeSwatches(){
+  const box = document.getElementById('themeSwatches');
+  if(!box) return;
+  box.innerHTML = THEMES.map(function(t){
+    const activeClass = state.theme === t.key ? ' active' : '';
+    return '<button class="theme-swatch' + activeClass + '" style="--swatch-color:' + t.accent + '" ' +
+           'title="' + t.label + '" onclick="applyTheme(\'' + t.key + '\')"></button>';
+  }).join('');
+}
+
 function subjectPct(subject){
   if(!subject.chapters.length) return 0;
   const done = subject.chapters.filter(c => c.done).length;
@@ -554,7 +673,9 @@ function updateClock(){
 
 function updateDaysLeft(){
   const examInput = document.getElementById('examDate');
-  examInput.value = state.examDate;
+  if(examInput && document.activeElement !== examInput){
+    examInput.value = state.examDate;
+  }
   const target = new Date(state.examDate + 'T00:00:00');
   const now = new Date();
   const diffMs = target - now;
@@ -580,23 +701,35 @@ function setMinisterialDays(value){
   updatePhase();
 }
 
-/* ===== 30-day schedule phase (ديناميكي حسب تاريخ الامتحان وعدد أيام الأسئلة الوزارية) ===== */
+function setCoverageDays(value){
+  let n = parseInt(value, 10);
+  if(isNaN(n) || n < 1) n = 1;
+  state.coverageDays = n;
+  saveState();
+  updatePhase();
+}
 
-/* يحسب: تاريخ البداية، إجمالي أيام الجدول (لين يوم الامتحان)،
-   أيام الأسئلة الوزارية الفعلية، ويوم انتهاء تغطية المنهج ويوم انتهاء الجدول كامل */
+/* ===== جدول المراحل (ديناميكي حسب أيام التغطية + أيام الوزاري، مستقلة عن بعضها) ===== */
+
+/* يحسب: تاريخ البداية، أيام تغطية المنهج، أيام الوزاري، نهاية كل مرحلة،
+   وعدد الأيام الفعلية لين الامتحان (للمقارنة فقط) */
 function computeScheduleNumbers(){
   const start = new Date(SCHEDULE_START + 'T00:00:00');
+
+  let coverage = parseInt(state.coverageDays, 10);
+  if(isNaN(coverage) || coverage < 1) coverage = 1;
+
+  let ministerial = parseInt(state.ministerialDays, 10);
+  if(isNaN(ministerial) || ministerial < 0) ministerial = 0;
+
+  const phase1End = coverage;        // آخر يوم تغطية المنهج
+  const phase2End = coverage + ministerial; // آخر يوم بكل الجدول
+
   const examD = new Date(state.examDate + 'T00:00:00');
-  let totalDays = Math.round((examD - start) / (1000*60*60*24)) + 1;
-  if(totalDays < 1) totalDays = 1;
+  let daysToExam = Math.round((examD - start) / (1000*60*60*24)) + 1;
+  if(daysToExam < 1) daysToExam = 1;
 
-  let ministerial = Math.max(0, parseInt(state.ministerialDays, 10) || 0);
-  if(ministerial >= totalDays) ministerial = Math.max(totalDays - 1, 0);
-
-  const phase1End = totalDays - ministerial; // آخر يوم تغطية المنهج
-  const phase2End = totalDays;               // آخر يوم بكل الجدول (يوم الامتحان)
-
-  return { start, totalDays, ministerial, phase1End, phase2End };
+  return { start, coverage, ministerial, phase1End, phase2End, daysToExam };
 }
 
 /* عدد الأيام الباقية شاملة اليوم الحالي نفسه، لحد نهاية اليوم المحدد */
@@ -606,7 +739,7 @@ function daysUntilEnd(endDay, dayNumber){
 
 function updatePhase(){
   const nums = computeScheduleNumbers();
-  const { start, totalDays, ministerial, phase1End, phase2End } = nums;
+  const { start, coverage, ministerial, phase1End, phase2End, daysToExam } = nums;
 
   const now = new Date();
   const dayNumber = Math.floor((now - start) / (1000*60*60*24)) + 1;
@@ -644,7 +777,6 @@ function updatePhase(){
     document.getElementById('phaseNextInfo').textContent = '';
   }
 
-  // أيقونة نهاية تغطية المنهج
   const coverageEndDateEl = document.getElementById('coverageEndDate');
   coverageEndDateEl.textContent = fmtArabicDate(dayOffsetDate(start, phase1End));
 
@@ -653,10 +785,31 @@ function updatePhase(){
     ? (dayNumber <= phase1End ? daysToMinisterial : '✓')
     : '—';
 
-  // مزامنة قيمة حقل الإدخال مع الحالة
+  /* مزامنة قيم حقول الإدخال مع الحالة (بدون التعدي على حقل المستخدم يكتب فيه حالياً) */
+  const covInput = document.getElementById('coverageDaysInput');
+  if(covInput && document.activeElement !== covInput){
+    covInput.value = coverage;
+  }
   const input = document.getElementById('ministerialDaysInput');
   if(input && document.activeElement !== input){
     input.value = ministerial;
+  }
+
+  /* مقارنة نهاية الجدول (تغطية + وزاري) بيوم الامتحان الفعلي */
+  const bufferEl = document.getElementById('bufferLine');
+  if(bufferEl){
+    const diff = daysToExam - phase2End;
+    bufferEl.classList.remove('buffer-ok','buffer-warn');
+    if(diff > 0){
+      bufferEl.classList.add('buffer-ok');
+      bufferEl.textContent = '✓ عندك ' + diff + ' يوم احتياط بعد نهاية الجدول ولين الامتحان';
+    } else if(diff < 0){
+      bufferEl.classList.add('buffer-warn');
+      bufferEl.textContent = '⚠ جدولك يتجاوز يوم الامتحان بـ ' + Math.abs(diff) + ' يوم — قلل أيام التغطية أو الوزارية';
+    } else {
+      bufferEl.classList.add('buffer-ok');
+      bufferEl.textContent = '✓ جدولك يطابق يوم الامتحان تمامًا';
+    }
   }
 
   renderPhaseDatesTable(nums);
@@ -695,7 +848,7 @@ function renderPhaseDatesTable(nums){
   }).join('');
 }
 
-/* ===== celebration logic ===== */
+/* ===== celebration logic (الاحتفال الكبير عند إنجاز كل المنهج) ===== */
 function spawnFlowers(){
   const field = document.getElementById('flowerField');
   const emojiSet = ['🌸','🌺','🌷'];
@@ -733,13 +886,67 @@ function closeCelebration(){
   videoBox.innerHTML = '';
 }
 
+/* ===== احتفال صغير عند إكمال مادة وحدة (مو كل المنهج) ===== */
+function microCelebrate(subjectId){
+  const card = document.getElementById('subject-card-' + subjectId);
+  if(!card) return;
+  const rect = card.getBoundingClientRect();
+  const burst = document.createElement('div');
+  burst.className = 'mini-burst';
+  burst.style.position = 'fixed';
+  burst.style.left = (rect.left + rect.width/2) + 'px';
+  burst.style.top = (rect.top + 24) + 'px';
+  burst.style.pointerEvents = 'none';
+  burst.style.zIndex = '500';
+  document.body.appendChild(burst);
+
+  const emojiSet = ['✨','🌸','⭐'];
+  for(let i = 0; i < 10; i++){
+    const p = document.createElement('span');
+    p.className = 'mini-particle';
+    p.textContent = emojiSet[Math.floor(Math.random()*emojiSet.length)];
+    p.style.setProperty('--dx', (Math.random()*160-80) + 'px');
+    p.style.setProperty('--dy', (-(60+Math.random()*80)) + 'px');
+    p.style.animationDelay = (Math.random()*0.15) + 's';
+    burst.appendChild(p);
+  }
+  setTimeout(() => burst.remove(), 1400);
+}
+
+/* ===== عداد أرقام متحرك (للإحصائيات) ===== */
+function animateCount(el, to, duration, suffix){
+  if(!el) return;
+  suffix = suffix || '';
+  const from = parseInt(el.dataset.count || '0', 10) || 0;
+  if(from === to){
+    el.textContent = to + suffix;
+    el.dataset.count = to;
+    return;
+  }
+  const startTime = performance.now();
+  function step(now){
+    const progress = Math.min((now - startTime) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = Math.round(from + (to - from) * eased);
+    el.textContent = current + suffix;
+    if(progress < 1){
+      requestAnimationFrame(step);
+    } else {
+      el.textContent = to + suffix;
+      el.dataset.count = to;
+    }
+  }
+  requestAnimationFrame(step);
+}
+
 function render(){
   const container = document.getElementById('subjects');
   container.innerHTML = '';
 
   let totalChapters = 0, totalDone = 0, subjectsComplete = 0;
+  const newlyCompleted = [];
 
-  state.subjects.forEach(subject => {
+  state.subjects.forEach((subject, idx) => {
     totalChapters += subject.chapters.length;
     totalDone += subject.chapters.filter(c => c.done).length;
 
@@ -749,8 +956,17 @@ function render(){
     const isBottleneck = subject.name.trim() === BOTTLENECK_SUBJECT_NAME && !isComplete;
     if(isComplete) subjectsComplete++;
 
+    if(isComplete && !knownCompleteIds.has(subject.id)){
+      if(firstRenderDone) newlyCompleted.push(subject.id);
+      knownCompleteIds.add(subject.id);
+    } else if(!isComplete && knownCompleteIds.has(subject.id)){
+      knownCompleteIds.delete(subject.id);
+    }
+
     const card = document.createElement('div');
     card.className = 'subject' + (isComplete ? ' complete' : '') + (isBottleneck ? ' bottleneck' : '');
+    card.id = 'subject-card-' + subject.id;
+    card.style.animationDelay = Math.min(idx * 0.05, 0.4) + 's';
 
     const head = document.createElement('div');
     head.className = 'subject-head';
@@ -760,6 +976,7 @@ function render(){
         <div class="subject-name">
           <input type="text" value="${escapeAttr(subject.name)}" onchange="renameSubject('${subject.id}', this.value)">
         </div>
+        <span class="chapter-count-badge">${subject.chapters.length} فصل</span>
         ${isComplete ? '<span class="badge done">مكتمل</span>' : ''}
         ${isBottleneck ? '<span class="badge weak">نقطة ضعف</span>' : ''}
       </div>
@@ -807,12 +1024,12 @@ function render(){
   });
 
   const overallPct = totalChapters ? Math.round((totalDone / totalChapters) * 100) : 0;
-  document.getElementById('overallPct').textContent = overallPct + '%';
+  animateCount(document.getElementById('overallPct'), overallPct, 450, '%');
   document.getElementById('overallBar').style.width = overallPct + '%';
   document.getElementById('overallCount').textContent = totalDone + ' / ' + totalChapters + ' فصل';
 
-  document.getElementById('statDone').textContent = totalDone;
-  document.getElementById('statLeft').textContent = totalChapters - totalDone;
+  animateCount(document.getElementById('statDone'), totalDone, 450);
+  animateCount(document.getElementById('statLeft'), totalChapters - totalDone, 450);
   document.getElementById('statSubjects').textContent = subjectsComplete + '/' + state.subjects.length;
 
   if(totalChapters > 0 && totalDone === totalChapters){
@@ -827,6 +1044,9 @@ function render(){
 
   updateDaysLeft();
   updatePhase();
+
+  newlyCompleted.forEach(id => microCelebrate(id));
+  firstRenderDone = true;
 }
 
 function escapeAttr(str){
