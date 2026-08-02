@@ -1,4 +1,4 @@
-<!-- study-tracker.html — استبدال كامل -->
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -327,6 +327,53 @@ h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
   animation: miniPop .9s ease forwards;
 }
 
+/* ===== exam timeline (جدول امتحانات علمي) ===== */
+.exam-timeline{
+  background: var(--panel);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px 20px;
+  margin: 0 0 24px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+}
+.exam-timeline-head{ display:flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+.exam-timeline-title{ font-size: 15px; font-weight: 700; }
+.exam-timeline-badge{
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted);
+  background: var(--panel2); border: 1px solid var(--border); border-radius: 10px; padding: 3px 10px;
+}
+.exam-list{ display:flex; flex-direction: column; gap: 0; position: relative; }
+.exam-item{
+  display:flex; align-items:center; gap: 14px; padding: 10px 4px;
+  border-bottom: 1px solid var(--border); position: relative;
+}
+.exam-item:last-child{ border-bottom: none; }
+.exam-date-box{
+  flex-shrink: 0; width: 54px; text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+}
+.exam-date-day{ font-size: 20px; font-weight: 700; color: var(--text); line-height: 1.1; }
+.exam-date-month{ font-size: 10px; color: var(--muted); }
+.exam-mid{ flex: 1; min-width: 0; }
+.exam-subject{ font-size: 15px; font-weight: 700; color: var(--text); }
+.exam-weekday{ font-size: 12px; color: var(--muted); margin-top: 2px; }
+.exam-status{
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; flex-shrink: 0; white-space: nowrap;
+  padding: 4px 10px; border-radius: 10px;
+}
+.exam-item.done{ opacity: .45; }
+.exam-item.done .exam-status{ background: rgba(89,230,168,0.12); color: var(--success); }
+.exam-item.next{
+  background: rgba(var(--accent-rgb), 0.08);
+  border-radius: 10px; margin: 2px 0; padding: 12px 10px;
+}
+.exam-item.next .exam-date-box{ color: var(--accent); }
+.exam-item.next .exam-date-day{ color: var(--accent); }
+.exam-item.next .exam-status{ background: rgba(var(--accent-rgb), 0.18); color: var(--accent); font-weight: 700; }
+.exam-item.upcoming .exam-status{ color: var(--muted); }
+
 /* ===== phase schedule ===== */
 .phase-card{
   background: var(--panel);
@@ -438,6 +485,14 @@ h1{ font-size: 28px; font-weight: 900; margin-bottom: 6px; }
     </div>
   </div>
 
+  <div class="exam-timeline">
+    <div class="exam-timeline-head">
+      <span class="exam-timeline-title">جدول امتحانات الدور الثاني — علمي</span>
+      <span class="exam-timeline-badge" id="examTimelineBadge">-</span>
+    </div>
+    <div class="exam-list" id="examList"></div>
+  </div>
+
 
   <div class="phase-card">
     <div class="phase-top">
@@ -483,8 +538,22 @@ const STORAGE_KEY = 'abu-alhassan-study-tracker-v5';
 /* معرّف فيديو اليوتيوب */
 const CELEBRATION_YOUTUBE_ID = 'BiwlJl-aqX4';
 
-/* يوم 1 بجدولك — بدأ 2 يوليو 2026 */
-const SCHEDULE_START = '2026-07-02';
+/* يوم 1 بجدولك — بدأ 2 آب 2026 */
+const SCHEDULE_START = '2026-08-02';
+
+/* جدول امتحانات الدور الثاني - الفرع العلمي (من جدول وزارة التربية) */
+const EXAM_SCHEDULE = [
+  { date: '2026-08-27', weekday: 'الخميس',   subject: 'التربية الإسلامية' },
+  { date: '2026-08-30', weekday: 'الأحد',    subject: 'اللغة العربية' },
+  { date: '2026-09-01', weekday: 'الثلاثاء', subject: 'اللغة الإنكليزية' },
+  { date: '2026-09-03', weekday: 'الخميس',   subject: 'الأحياء' },
+  { date: '2026-09-06', weekday: 'الأحد',    subject: 'الرياضيات' },
+  { date: '2026-09-08', weekday: 'الثلاثاء', subject: 'الكيمياء' },
+  { date: '2026-09-10', weekday: 'الخميس',   subject: 'الفيزياء' },
+  { date: '2026-09-12', weekday: 'السبت',    subject: 'اللغة الفرنسية' }
+];
+
+const ARABIC_MONTHS = ['كانون الثاني','شباط','آذار','نيسان','أيار','حزيران','تموز','آب','أيلول','تشرين الأول','تشرين الثاني','كانون الأول'];
 
 /* ألوان الثيمات المتاحة — تتحكم بـ accent / accent-dim بس، الألوان الدلالية (نجاح/خطر) ثابتة دائماً */
 const THEMES = [
@@ -500,7 +569,7 @@ let knownCompleteIds = new Set();
 let firstRenderDone = false;
 
 const defaultState = {
-  examDate: '2026-08-04',
+  examDate: '2026-08-27',
   coverageDays: 34,     // أيام تغطية المنهج — مباشرة وقابلة للتعديل (34 = نفس سلوك النسخة القديمة لما الوزاري كان صفر)
   ministerialDays: 0,   // أيام حل الأسئلة الوزارية — مباشرة وقابلة للتعديل
   theme: 'amber',
@@ -939,6 +1008,54 @@ function animateCount(el, to, duration, suffix){
   requestAnimationFrame(step);
 }
 
+function renderExamTimeline(){
+  const listEl = document.getElementById('examList');
+  const badgeEl = document.getElementById('examTimelineBadge');
+  if(!listEl) return;
+
+  const now = new Date();
+  const todayStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+
+  let nextIndex = EXAM_SCHEDULE.findIndex(e => e.date >= todayStr);
+  if(nextIndex === -1) nextIndex = EXAM_SCHEDULE.length; // كلها خلصت
+
+  const remaining = EXAM_SCHEDULE.length - nextIndex;
+  badgeEl.textContent = remaining > 0 ? (remaining + ' امتحان باقي') : 'خلصت كل الامتحانات ✓';
+
+  listEl.innerHTML = EXAM_SCHEDULE.map((exam, i) => {
+    const d = new Date(exam.date + 'T00:00:00');
+    const day = d.getDate();
+    const month = ARABIC_MONTHS[d.getMonth()];
+
+    let statusClass = 'upcoming';
+    let statusText = '';
+    if(i < nextIndex){
+      statusClass = 'done';
+      statusText = 'خلص ✓';
+    } else if(i === nextIndex){
+      statusClass = 'next';
+      const diffDays = Math.round((d - new Date(todayStr + 'T00:00:00')) / (1000*60*60*24));
+      statusText = diffDays === 0 ? 'اليوم!' : (diffDays === 1 ? 'باچر' : ('بعد ' + diffDays + ' يوم'));
+    } else {
+      statusText = 'قادم';
+    }
+
+    return `
+      <div class="exam-item ${statusClass}">
+        <div class="exam-date-box">
+          <div class="exam-date-day">${day}</div>
+          <div class="exam-date-month">${month}</div>
+        </div>
+        <div class="exam-mid">
+          <div class="exam-subject">${exam.subject}</div>
+          <div class="exam-weekday">${exam.weekday}</div>
+        </div>
+        <div class="exam-status">${statusText}</div>
+      </div>
+    `;
+  }).join('');
+}
+
 function render(){
   const container = document.getElementById('subjects');
   container.innerHTML = '';
@@ -1110,15 +1227,18 @@ function deleteSubject(subjectId){
 }
 
 updateClock();
+renderExamTimeline();
 setInterval(updateClock, 60000);
 setInterval(updateDaysLeft, 60000);
 setInterval(updatePhase, 60000);
+setInterval(renderExamTimeline, 60000);
 
 document.addEventListener('visibilitychange', () => {
   if(document.visibilityState === 'visible'){
     updateClock();
     updateDaysLeft();
     updatePhase();
+    renderExamTimeline();
   }
 });
 
