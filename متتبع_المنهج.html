@@ -778,10 +778,7 @@ function setCoverageDays(value){
   updatePhase();
 }
 
-/* ===== جدول المراحل (ديناميكي حسب أيام التغطية + أيام الوزاري، مستقلة عن بعضها) ===== */
 
-/* يحسب: تاريخ البداية، أيام تغطية المنهج، أيام الوزاري، نهاية كل مرحلة،
-   وعدد الأيام الفعلية لين الامتحان (للمقارنة فقط) */
 function computeScheduleNumbers(){
   const start = new Date(SCHEDULE_START + 'T00:00:00');
 
@@ -801,7 +798,7 @@ function computeScheduleNumbers(){
   return { start, coverage, ministerial, phase1End, phase2End, daysToExam };
 }
 
-/* عدد الأيام الباقية شاملة اليوم الحالي نفسه، لحد نهاية اليوم المحدد */
+
 function daysUntilEnd(endDay, dayNumber){
   return Math.max(endDay - dayNumber + 1, 0);
 }
